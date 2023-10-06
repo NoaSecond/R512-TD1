@@ -34,9 +34,13 @@ class Ball {
     t += dt;
     theta += dt * omega;
     velocity.y += dt * gravity;
+    wallsCollision();
+    //ballsCollision(?);
+  }
+  
+  void wallsCollision() {  
     PVector locationN = new PVector(location.x, location.y);
     location.add(PVector.mult(velocity, (float) dt));
-  
     for (int i = 0; i < 4; i++) {
       PVector n = new PVector((float) Math.cos(theta + Math.PI / 2 * i), (float) Math.sin(theta + Math.PI / 2 * i));
       double d = location.x * n.x + location.y * n.y;
@@ -46,5 +50,11 @@ class Ball {
     }
     PVector e = PVector.sub(location, locationN);
     velocity = PVector.div(e, (float) dt);
+    
+    // TODO : Faire en sorte que la boule rebondisse
+  }
+  
+  void ballsCollision(Ball[] otherBalls) {
+    // TODO : Faire en sorte que les boules se cognent
   }
 }

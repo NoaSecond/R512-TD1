@@ -7,7 +7,7 @@ double theta = 0;
 double R = 200;
 
 // Ball
-int nbBalls = 1;
+int nbBalls = 1; //TODO : Comprendre pourquoi le nbBalls à une influence sur omega
 Ball[] balls = new Ball[nbBalls];
 
 void settings() {
