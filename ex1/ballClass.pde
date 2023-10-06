@@ -1,57 +1,50 @@
 class Ball {
   color c;
-  int ballSize;
+  int masse;
+  double rayon, gravity;
+  double omega = 0.25;
   PVector location;
   PVector velocity;
-  PVector gravity;
+  PVector location0;
+  PVector velocity0;
   
-  Ball(color col, PVector vel, int size) {
+  Ball(color col, int size, int masse, PVector randomLocation, PVector randomVelocity) {
     c = col; 
-    ballSize = size;
-    location = new PVector(width/2,height/2);
-    velocity = vel;
-    gravity = new PVector(0,0.1);  
+    rayon = size/2;
+    location = randomLocation;
+    velocity = randomVelocity;
+    location0 = new PVector(0, 0);
+    velocity0 = new PVector(0, 0);
+    gravity = 1500; 
   }
   
   String toString() {
     String s = "\nCouleur : #"+hex(c, 6);
-    s += "\nTaille : "+ballSize;
-    s += "\nVelocité de départ : ("+velocity.x+","+velocity.y+")";
+    s += "\nTaille : "+rayon*2;
     s += "\n";
     return s;
   }
   
   void display() { 
     fill(c);
-    circle(location.x,location.y,ballSize);
+    circle(location.x,location.y, (float) (rayon * 2));
   }
   
   void move() {
-    //Forces
-    location.add(velocity.x,velocity.y);
-    velocity.add(gravity.x,gravity.y);
-  }
+    t += dt;
+    theta += dt * omega;
+    velocity.y += dt * gravity;
+    PVector locationN = new PVector(location.x, location.y);
+    location.add(PVector.mult(velocity, (float) dt));
   
-  void checkWallsCollision() {
-    //Right
-    if ((location.x > (width-boxWidth/2)-ballSize/2)) {
-      velocity.x = velocity.x * -1;
+    for (int i = 0; i < 4; i++) {
+      PVector n = new PVector((float) Math.cos(theta + Math.PI / 2 * i), (float) Math.sin(theta + Math.PI / 2 * i));
+      double d = location.x * n.x + location.y * n.y;
+      double p = (d - (R - rayon)) < 0 ? 0 : (d - (R - rayon));
+      PVector m = PVector.mult(n, (float) p);
+      location.sub(m);
     }
-    //Left
-    if (location.x < (boxWidth / 2)+ballSize/2) {
-      velocity.x = velocity.x * -1;
-    }
-    //Top
-    if (location.y < (boxHeight / 2)+ballSize/2) {
-      velocity.y = velocity.y * -1;
-    }
-    //Bottom
-    if (location.y > (height-boxHeight/2)-ballSize/2) {
-      velocity.y = velocity.y * -0.95; 
-    }
-  }
-    
-  void checkBallsCollision() {
-    
+    PVector e = PVector.sub(location, locationN);
+    velocity = PVector.div(e, (float) dt);
   }
 }
